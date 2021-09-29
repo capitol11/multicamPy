@@ -1,11 +1,13 @@
 from pydantic.datetime_parse import time
 from selenium import webdriver
 from bs4 import BeautifulSoup as bs
+import pandas as pd
 import time
 
 
 def get_base_url():
     return current_url
+
 
 class Base_URL:
     global current_url

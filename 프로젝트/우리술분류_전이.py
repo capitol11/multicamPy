@@ -2,7 +2,10 @@ import tensorflow as tf
 from PIL import Image
 import os, glob
 
-from keras import Sequential
+from keras.applications.resnet import ResNet50
+from keras.applications.vgg16 import VGG16
+from keras.applications.vgg19 import VGG19
+from keras.layers import Flatten, Dense, BatchNormalization, Activation
 from sklearn.model_selection import train_test_split
 import numpy as np
 import pandas as pd
@@ -71,30 +74,18 @@ print('X_train shape:', X_train.shape)
 dropout = 0.25
 
 
-#resnet50 = ResNet50(weights = 'imagenet', input_shape = (64, 64, 3), include_top = False)
+resnet50 = ResNet50(weights = 'imagenet', input_shape = (64, 64, 3), include_top = False)
+#vgg19 = VGG19(weights = 'imagenet', input_shape = (64, 64, 3), include_top = False)
 
-model = Sequential()
-model.add(tf.keras.layers.Conv2D(8, (3, 3), input_shape=X_train.shape[1:], padding="same"))
-model.add(tf.keras.layers.Activation('relu'))
+model = tf.keras.models.Sequential()
+model.add(resnet50)
+model.add(Flatten())
+model.add(Dense(256))
+model.add(BatchNormalization())
+model.add(Activation('relu'))
 model.add(tf.keras.layers.Dropout(dropout))
-model.add(tf.keras.layers.MaxPooling2D(pool_size=(2, 2)))
+model.add(Dense(total_categorie_length, activation = 'softmax'))
 
-model.add(tf.keras.layers.Conv2D(16, (3, 3)))
-model.add(tf.keras.layers.Activation('relu'))
-model.add(tf.keras.layers.Dropout(dropout))
-model.add(tf.keras.layers.MaxPooling2D(pool_size=(2, 2)))
-
-model.add(tf.keras.layers.Conv2D(32, (3, 3)))
-model.add(tf.keras.layers.Activation('relu'))
-model.add(tf.keras.layers.Dropout(dropout))
-model.add(tf.keras.layers.MaxPooling2D(pool_size=(2, 2)))
-
-model.add(tf.keras.layers.Flatten())  # this converts our 3D feature maps to 1D feature vectors
-model.add(tf.keras.layers.Dense(64))
-model.add(tf.keras.layers.Activation('relu'))
-
-model.add(tf.keras.layers.Dropout(dropout))
-model.add(tf.keras.layers.Dense(total_categorie_length, activation = 'softmax'))
  
 
 # build model
@@ -126,8 +117,6 @@ pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 1000)
 df = pd.read_csv('C:/Users/Soohyun/Desktop/AI 프로젝트 1조/전통주정보_크롤링.csv', encoding='cp949')
 #print(df.head())
-
-
 
 test_img = "C:/Users/Soohyun/Desktop/PythonProject/multicamPy/프로젝트/술이미지크롤링/우리술분류/오매백주_이미지.jpg"
 img = Image.open(test_img)

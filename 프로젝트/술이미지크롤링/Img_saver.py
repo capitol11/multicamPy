@@ -13,10 +13,14 @@ pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 1000)
 
-data = pd.read_csv('C:/Users/Soohyun/Desktop/AI 프로젝트 1조/한국농수산식품유통공사_전통주 정보_20210914.csv', encoding='cp949')
-#alcohol_names = data['전통주명'].tolist()
-#alcohol_names = alcohol_names[423:]
-filtered_alcohol_names = ['로얄 안동소주', '명작 복분자', '미생 막걸리', '부자진 배치', '서울의 밤']
+#data = pd.read_csv('C:/Users/Soohyun/Desktop/AI 프로젝트 1조/한국농수산식품유통공사_전통주 정보_20210914.csv', encoding='cp949')
+data = pd.read_csv('C:/Users/Soohyun/Desktop/AI 프로젝트 1조/전통주정보_크롤링.csv', encoding='cp949')
+#alcohol_names = data['전통주명'].tolist()   # 총 640
+alcohol_names = data['상품명'].tolist()   # 총 187
+
+print(len(alcohol_names))
+alcohol_names = alcohol_names[:50]
+#filtered_alcohol_names = ['로얄 안동소주', '명작 복분자', '미생 막걸리', '부자진 배치', '서울의 밤']
 
 total_urls = []
 
@@ -25,12 +29,7 @@ driver = webdriver.Chrome(r'C:/pydata/chromedriver')
 
 def scroll_down():
     scroll_count = 0
-
-    print("ㅡ 스크롤 다운 시작 ㅡ")
-
-    # 스크롤 위치값 얻고 last_height 에 저장
     last_height = driver.execute_script("return document.body.scrollHeight")
-
 
     body = driver.find_element_by_css_selector('body')
     for i in range(2):
@@ -81,8 +80,8 @@ url = str(get_base_url()).split('%')[0] # get URL from 이미지크롤링.py
 print(url)
 
 
-for i in filtered_alcohol_names:
+for i in alcohol_names:
     createFolder(i)
 
-for i in filtered_alcohol_names:
+for i in alcohol_names:
     search전통주(url, i)
